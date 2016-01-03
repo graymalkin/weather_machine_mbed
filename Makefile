@@ -4,7 +4,8 @@
 GCC_BIN =
 PROJECT = weather_machine
 OBJECTS = ./main.o \
-		  ./sunrise/sunrise.o
+		  ./sunrise/sunrise.o \
+		  ./mqtt_client.o ./mqtt_event_handlers.o
 SYS_OBJECTS = ./mbed/TARGET_K64F/TOOLCHAIN_GCC_ARM/board.o ./mbed/TARGET_K64F/TOOLCHAIN_GCC_ARM/cmsis_nvic.o ./mbed/TARGET_K64F/TOOLCHAIN_GCC_ARM/mbed_overrides.o ./mbed/TARGET_K64F/TOOLCHAIN_GCC_ARM/retarget.o ./mbed/TARGET_K64F/TOOLCHAIN_GCC_ARM/startup_MK64F12.o ./mbed/TARGET_K64F/TOOLCHAIN_GCC_ARM/system_MK64F12.o \
 			  ./mbed-rtos/rtx/TARGET_CORTEX_M/TARGET_M4/TOOLCHAIN_GCC/HAL_CM4.o ./mbed-rtos/rtx/TARGET_CORTEX_M/TARGET_M4/TOOLCHAIN_GCC/SVC_Table.o \
 			  ./mbed-rtos/rtos/Semaphore.o ./mbed-rtos/rtos/Mutex.o ./mbed-rtos/rtos/RtosTimer.o ./mbed-rtos/rtos/Thread.o \

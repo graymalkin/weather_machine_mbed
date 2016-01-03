@@ -25,45 +25,18 @@
 #include "MQTTEthernet.h"
 #include "MQTTClient.h"
 
+#include "mqtt_client.h"
 
 
 int main()
 {
-    MQTTEthernet ipstack = MQTTEthernet();
-    float version = 0.5;
-    char* topic = (char*)"mbed-sample";
-    int arrivedcount = 0;
+    // Mostly pinched from the HelloMQTT demo here
+    // https://developer.mbed.org/teams/mqtt/code/HelloMQTT
+    MQTTEthernet ipstack;
+    MQTT::Client<MQTTEthernet, Countdown> m_client(ipstack);
+    if(mqtt_connect(ipstack, m_client) != MQTT::SUCCESS) {
+        mqtt_error();
+    }
+    mqtt_subscriptions(m_client);
 
-    printf("HelloMQTT: version is %f\n", version);
-
-    MQTT::Client<MQTTEthernet, Countdown> client = MQTT::Client<MQTTEthernet, Countdown>(ipstack);
-
-    char* hostname = (char*)"m2m.eclipse.org";
-    int port = 1883;
-    printf("Connecting to %s:%d\n", hostname, port);
-    int rc = ipstack.connect(hostname, port);
-    if (rc != 0)
-        printf("rc from TCP connect is %d\n", rc);
-
-    MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
-    data.MQTTVersion = 3;
-    data.clientID.cstring = (char*)"mbed-sample";
-    data.username.cstring = (char*)"testuser";
-    data.password.cstring = (char*)"testpassword";
-    if ((rc = client.connect(data)) != 0)
-        printf("rc from MQTT connect is %d\n", rc);
-
-        MQTT::Message message;
-
-    // QoS 0
-    char buf[100];
-    sprintf(buf, "Hello World!  QoS 0 message from app version %f\n", version);
-    message.qos = MQTT::QOS0;
-    message.retained = false;
-    message.dup = false;
-    message.payload = (void*)buf;
-    message.payloadlen = strlen(buf)+1;
-    rc = client.publish(topic, message);
-    while (arrivedcount < 1)
-        client.yield(100);
 }
