@@ -16,6 +16,13 @@ void wsDrive::setData(pixelInfo *dataStart, uint16_t dataLen)
     pixArray16 = NULL;
 }
 
+void wsDrive::setData(pixelInfo16 *dataStart, uint16_t dataLen)
+{
+    pixArray16 = dataStart;
+    pixelLen = dataLen;
+    pixArray = NULL;
+}
+
 void wsDrive::sendData()
 {
     frequency(2400000);
@@ -38,11 +45,12 @@ void wsDrive::sendData()
 // each bytes sent as two 12 bit messages (3 bits of data per LED bit).
 void wsDrive::sendByte(unsigned char value)
 {
+
     uint16_t dataToSend = 0;
 
     uint8_t mask = 0x80;
     while (mask) {
-        dataToSend += (value & mask)?0x06:0x4; // 100 for a 0 or 110 for a 1
+        dataToSend += (value & mask)?0x06:0x4; // 100 for a 0 or  110 for a 1
         if (mask & 0x11) {                     // trans
             fastWrite(dataToSend);
             dataToSend = 0;
@@ -57,4 +65,29 @@ void wsDrive::sendPixel(pixelInfo *pixToSend)
     sendByte(pixToSend->G);
     sendByte(pixToSend->R);
     sendByte(pixToSend->B);
+}
+
+void wsDrive::sendPixel(pixelInfo16 *pixToSend)
+{
+    if (pixToSend->G > 0xff)
+        sendByte(0xff);
+    else if (pixToSend->G < 0)
+        sendByte(0xff);
+    else
+        sendByte((unsigned char)pixToSend->G);
+
+    if (pixToSend->R > 0xff)
+        sendByte(0xff);
+    else if (pixToSend->R < 0)
+        sendByte(0xff);
+    else
+        sendByte((unsigned char)pixToSend->R);
+
+    if (pixToSend->B > 0xff)
+        sendByte(0xff);
+    else if (pixToSend->B < 0)
+        sendByte(0xff);
+    else
+        sendByte((unsigned char)pixToSend->B);
+
 }

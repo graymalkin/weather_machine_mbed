@@ -34,19 +34,13 @@
 // DigitalIn dummy(PTD2,PullDown);
 wsDrive ledDriver(PTD2,PTD3,PTD1);
 pixelInfo pixelData[WS2812_LENGTH];
-Sunrise sunrise();
+Sunrise sunrise;
 Colours colours(sunrise);
 
 
 int main()
 {
 	memset(&pixelData, 0, sizeof(pixelData));
-	for(int i = 0; i <= WS2812_LENGTH; i++)
-	{
-		pixelData[i].R = 100;
-		pixelData[i].G = 0;
-		pixelData[i].B = 0;
-	}
 
     // Mostly pinched from the HelloMQTT demo here
     // https://developer.mbed.org/teams/mqtt/code/HelloMQTT
@@ -56,9 +50,24 @@ int main()
     //     mqtt_error();
     // }
     // mqtt_subscriptions(m_client);
+
+	time_t current_time = 0;
+	colour_t current_colour;
+
 	while(1){
+
+		current_colour = colours.get_colour(current_time);
+
+		for(int i = 0; i <= WS2812_LENGTH; i++)
+		{
+			pixelData[i].R = current_colour.red;
+			pixelData[i].G = current_colour.green;
+			pixelData[i].B = current_colour.blue;
+		}
 		ledDriver.setData(pixelData, WS2812_LENGTH);
 		ledDriver.sendData();
+
+		current_time += 60;
 		wait_ms(150);
 	}
 }
