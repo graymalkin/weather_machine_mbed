@@ -18,25 +18,47 @@
  * USA.
  */
 
+
 #define MQTTCLIENT_QOS2 1
-
 #include "mbed.h"
-
 #include "MQTTEthernet.h"
 #include "MQTTClient.h"
 
+#include "colours.h"
 #include "mqtt_client.h"
+#include "sunrise.h"
+#include "wsDrive.h"
+
+#define WS2812_LENGTH 5
+
+// DigitalIn dummy(PTD2,PullDown);
+wsDrive ledDriver(PTD2,PTD3,PTD1);
+pixelInfo pixelData[WS2812_LENGTH];
+Sunrise sunrise();
+Colours colours(sunrise);
 
 
 int main()
 {
+	memset(&pixelData, 0, sizeof(pixelData));
+	for(int i = 0; i <= WS2812_LENGTH; i++)
+	{
+		pixelData[i].R = 100;
+		pixelData[i].G = 0;
+		pixelData[i].B = 0;
+	}
+
     // Mostly pinched from the HelloMQTT demo here
     // https://developer.mbed.org/teams/mqtt/code/HelloMQTT
-    MQTTEthernet ipstack;
-    MQTT::Client<MQTTEthernet, Countdown> m_client(ipstack);
-    if(mqtt_connect(ipstack, m_client) != MQTT::SUCCESS) {
-        mqtt_error();
-    }
-    mqtt_subscriptions(m_client);
-
+    // MQTTEthernet ipstack;
+    // MQTT::Client<MQTTEthernet, Countdown> m_client(ipstack);
+    // if(mqtt_connect(ipstack, m_client) != MQTT::SUCCESS) {
+    //     mqtt_error();
+    // }
+    // mqtt_subscriptions(m_client);
+	while(1){
+		ledDriver.setData(pixelData, WS2812_LENGTH);
+		ledDriver.sendData();
+		wait_ms(150);
+	}
 }
