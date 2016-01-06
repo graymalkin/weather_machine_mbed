@@ -2,9 +2,13 @@
  * (C) The University of Kent and Simon Cooksey 2015.
  */
 
+#include "mbed.h"
+
 #include "C12832.h"
 #include "mqtt_client.h"
 #include "mqtt_event_handlers.h"
+
+extern Serial host;
 
 int mqtt_connect(MQTTEthernet& ipstack, MQTT::Client<MQTTEthernet, Countdown>& m_client)
 {
@@ -18,18 +22,34 @@ int mqtt_connect(MQTTEthernet& ipstack, MQTT::Client<MQTTEthernet, Countdown>& m
 
 int mqtt_subscriptions(MQTT::Client<MQTTEthernet, Countdown>& m_client)
 {
-    m_client.subscribe("weather_sim/location", MQTT::QOS1, set_location);
-    m_client.subscribe("weather_sim/set_time", MQTT::QOS1, set_time);
-    m_client.subscribe("weather_sim/longitude", MQTT::QOS1, set_longitude);
-    m_client.subscribe("weather_sim/latitude", MQTT::QOS1, set_latitude);
-    m_client.subscribe("weather_sim/condition", MQTT::QOS1, set_condition);
+	int rc = 0;
 
-    m_client.subscribe("weather_sim/disable", MQTT::QOS1, disable_actuator);
-    m_client.subscribe("weather_sim/enable", MQTT::QOS1, enable_actuator);
+    if((rc = m_client.subscribe("weather_sim/location", MQTT::QOS1, set_location)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/location'\r\n", rc);
 
-    m_client.subscribe("weather_sim/lightning_strike", MQTT::QOS1, do_lightning_strike);
+	if((rc = m_client.subscribe("weather_sim/set_time", MQTT::QOS1, set_time)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/set_time'\r\n", rc);
 
-    m_client.subscribe("weather_sim/test", MQTT::QOS1, do_test);
+    if((rc = m_client.subscribe("weather_sim/longitude", MQTT::QOS1, set_longitude)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/longitude'\r\n", rc);
+
+    if((rc = m_client.subscribe("weather_sim/latitude", MQTT::QOS1, set_latitude)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/latitude'\r\n", rc);
+
+    if((rc = m_client.subscribe("weather_sim/condition", MQTT::QOS1, set_condition)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/condition'\r\n", rc);
+
+
+    // if((rc = m_client.subscribe("weather_sim/disable", MQTT::QOS1, disable_actuator)) != 0)
+	// 	host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/disable'\r\n", rc);
+    // if((rc = m_client.subscribe("weather_sim/enable", MQTT::QOS1, enable_actuator)) != 0)
+	// 	host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/enable'\r\n", rc);
+	//
+    // if((rc = m_client.subscribe("weather_sim/lightning_strike", MQTT::QOS1, do_lightning_strike)) != 0)
+	// 	host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/lightning_strike'\r\n", rc);
+	//
+    // if((rc = m_client.subscribe("weather_sim/test", MQTT::QOS1, do_test)) != 0)
+	// 	host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/test'\r\n", rc);
 
     return 0;
 }

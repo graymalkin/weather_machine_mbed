@@ -26,17 +26,25 @@
 
 #include "colours.h"
 #include "mqtt_client.h"
+#include "neo.h"
 #include "sunrise.h"
+#include "weather.h"
 #include "wsDrive.h"
 
-#define WS2812_LENGTH 5
+#define WS2812_LENGTH 30
+
+Serial host(USBTX, USBRX);
 
 // DigitalIn dummy(PTD2,PullDown);
-wsDrive ledDriver(PTD2,PTD3,PTD1);
+// wsDrive ledDriver(PTD2,PTD3,PTD1);
+DigitalOut neo_pin(PTD2);
+NeoPixel neo(neo_pin);
 pixelInfo pixelData[WS2812_LENGTH];
 Sunrise sunrise;
 Colours colours(sunrise);
 
+DigitalOut neopin(D9);
+DigitalOut green_led(LED_GREEN);
 
 int main()
 {
@@ -44,30 +52,19 @@ int main()
 
     // Mostly pinched from the HelloMQTT demo here
     // https://developer.mbed.org/teams/mqtt/code/HelloMQTT
-    // MQTTEthernet ipstack;
-    // MQTT::Client<MQTTEthernet, Countdown> m_client(ipstack);
-    // if(mqtt_connect(ipstack, m_client) != MQTT::SUCCESS) {
-    //     mqtt_error();
-    // }
-    // mqtt_subscriptions(m_client);
+    MQTTEthernet ipstack;
+    MQTT::Client<MQTTEthernet, Countdown> m_client(ipstack);
+    if(mqtt_connect(ipstack, m_client) != MQTT::SUCCESS) {
+		host.printf("MQTT: Error.\r\n  Failed to connect.\r\n");
+        mqtt_error();
+    }
+	host.printf("MQTT: Information.\r\n  Connected.\r\n");
 
-	time_t current_time = 0;
-	colour_t current_colour;
+    mqtt_subscriptions(m_client);
+	neo_colour_t colour;
+	neo.send_pixel(colour);
+	while(1)
+		m_client.yield(1000);
 
-	while(1){
 
-		current_colour = colours.get_colour(current_time);
-
-		for(int i = 0; i <= WS2812_LENGTH; i++)
-		{
-			pixelData[i].R = current_colour.red;
-			pixelData[i].G = current_colour.green;
-			pixelData[i].B = current_colour.blue;
-		}
-		ledDriver.setData(pixelData, WS2812_LENGTH);
-		ledDriver.sendData();
-
-		current_time += 60;
-		wait_ms(150);
-	}
 }
