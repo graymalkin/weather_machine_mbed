@@ -36,20 +36,18 @@ int mqtt_subscriptions(MQTT::Client<MQTTEthernet, Countdown>& m_client)
     if((rc = m_client.subscribe("weather_sim/latitude", MQTT::QOS1, set_latitude)) != 0)
 		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/latitude'\r\n", rc);
 
-    if((rc = m_client.subscribe("weather_sim/condition", MQTT::QOS1, set_condition)) != 0)
-		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/condition'\r\n", rc);
+    if((rc = m_client.subscribe("weather_sim/rain", MQTT::QOS1, set_rain)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/rain'\r\n", rc);
+    if((rc = m_client.subscribe("weather_sim/mist", MQTT::QOS1, set_mist)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/mist'\r\n", rc);
+    if((rc = m_client.subscribe("weather_sim/light", MQTT::QOS1, set_light)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/light'\r\n", rc);
 
+    if((rc = m_client.subscribe("weather_sim/lightning_strike", MQTT::QOS1, do_lightning_strike)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/lightning_strike'\r\n", rc);
 
-    // if((rc = m_client.subscribe("weather_sim/disable", MQTT::QOS1, disable_actuator)) != 0)
-	// 	host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/disable'\r\n", rc);
-    // if((rc = m_client.subscribe("weather_sim/enable", MQTT::QOS1, enable_actuator)) != 0)
-	// 	host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/enable'\r\n", rc);
-	//
-    // if((rc = m_client.subscribe("weather_sim/lightning_strike", MQTT::QOS1, do_lightning_strike)) != 0)
-	// 	host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/lightning_strike'\r\n", rc);
-	//
-    // if((rc = m_client.subscribe("weather_sim/test", MQTT::QOS1, do_test)) != 0)
-	// 	host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/test'\r\n", rc);
+    if((rc = m_client.subscribe("weather_sim/test", MQTT::QOS1, do_test)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/test'\r\n", rc);
 
     return 0;
 }

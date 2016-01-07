@@ -25,7 +25,7 @@ void set_latitude(MQTT::MessageData& m_data)
 
 }
 
-void set_condition(MQTT::MessageData& m_data)
+void set_rain(MQTT::MessageData& m_data)
 {
 	char buffer[20];
 
@@ -38,22 +38,20 @@ void set_condition(MQTT::MessageData& m_data)
 	set_rain((condition & 0x80) ? ON : OFF);
 }
 
+void set_mist(MQTT::MessageData& m_data)
+{
+
+}
+
+void set_light(MQTT::MessageData& m_data)
+{
+
+}
+
 void do_test(MQTT::MessageData& m_data)
 {
 
 }
-
-
-void enable_actuator(MQTT::MessageData& m_data)
-{
-
-}
-
-void disable_actuator(MQTT::MessageData& m_data)
-{
-
-}
-
 
 void do_lightning_strike(MQTT::MessageData& m_data)
 {
