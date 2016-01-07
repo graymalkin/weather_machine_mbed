@@ -23,22 +23,8 @@ Topics to subscribe to, and their purpose
 | `weather_sim/set_time`         | Set the local time for the location under sim | Long Int (unix time)          |
 | `weather_sim/longitude`        | Set the longitude of the current location     | Long Int                      |
 | `weather_sim/latitude`         | Set the latitude of the current location      | Long Int                      |
-| `weather_sim/condition`        | The current condition (enum)                  | Unsigned Char Value (0..255)  |
-| `weather_sim/test`             | Run through a test cycle                      | No data required              |
-| `weather_sim/disable`          | Disable actuators                             | Unsigned Char Value (0..255)  |
-| `weather_sim/enable`           | Enable actuators                              | Unsigned Char Value (0..255)  |
+| `weather_sim/rain`             | Set rain state                                | ('0' or '1')                  |
+| `weather_sim/mist`             | Set mist state                                | ('0' or '1')                  |
+| `weather_sim/light_level`      | Set mist state                                | Set some light level (0..100) |
 | `weather_sim/lightning_strike` | Perform a lightning strike                    | No data required              |
-
-## Conditions supported
-
-We can represent the "current condition" as a bit field.
-
-|   **Bit**   |   7   |   6   |   5   |   4   |   3   |   2   |   1   |   0   |
-|:------------|-------|-------|-------|-------|-------|-------|-------|-------|
-|    Use      | Rain  | Mist  | Light | Light | Light | `XXX` | `XXX` | Fan   |
-
-Making stormy weather something like `0b11011001` (Rain, Cloud, Dim light,
-Windy).
-
-Moon phase and sunrise/sunset will be calculated from the latitude of the
-currently set location.
+| `weather_sim/test`             | Run through a test cycle                      | No data required              |
