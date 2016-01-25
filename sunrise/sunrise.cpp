@@ -33,12 +33,6 @@
 
 #include "sunrise.h"
 
-void Sunrise::set_lat_long(double latitude, double longitude)
-{
-    latitude_c = latitude;
-    longitude_c = longitude;
-}
-
 double Sunrise::get_sun_declination(double fractional_time) {
     // Solar declination in radians
     double declination = 0.006918 - 0.399912 * cos(fractional_time) + 0.070257 * sin(fractional_time) -
@@ -84,7 +78,7 @@ time_t Sunrise::get_sunrise() {
     double fractional_time = get_fractional_time(time(NULL));
     double eqtime = get_equation_of_time(fractional_time);
     double sunrise_ha = RAD_TO_DEG(get_sr_hour_angle(fractional_time));
-    int sunrise = 661 + 4*(longitude_c - sunrise_ha) - eqtime;
+    int sunrise = 720 + 4*(longitude_c - sunrise_ha) - eqtime;
 
     return sunrise * 60;
 }
@@ -93,7 +87,7 @@ time_t Sunrise::get_sunset() {
     double fractional_time = get_fractional_time(time(NULL));
     double eqtime = get_equation_of_time(fractional_time);
     double sunset_ha = RAD_TO_DEG(0-get_sr_hour_angle(fractional_time));
-    int sunset = 661 + 4*(longitude_c - sunset_ha) - eqtime;
+    int sunset = 720 + 4*(longitude_c - sunset_ha) - eqtime;
 
     return sunset * 60;
 }

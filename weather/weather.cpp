@@ -3,6 +3,7 @@
 
 DigitalOut rain_on(PTC11);
 DigitalOut rain_off(PTC10);
+DigitalOut mist(PTC3);
 
 void set_rain(actuator_state_t state)
 {
@@ -24,5 +25,18 @@ void set_rain(actuator_state_t state)
 
 void set_mist(actuator_state_t state)
 {
-    // Set the mister
+	switch(state)
+	{
+		case ON:
+			mist = 1;
+			break;
+		default:
+			mist = 0;
+			break;
+	}
+}
+
+void set_light(int light_level)
+{
+	// Set the light level
 }

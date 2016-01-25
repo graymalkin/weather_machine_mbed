@@ -41,7 +41,18 @@ public:
      * +ve latitude: Northern Hemisphere, -ve Latitude: Southern Hemisphere
      * +ve Longitude: West of Greenwich, -ve Longitude: East of Greenwich
      */
-    void set_lat_long(double latitude, double longitude);
+    void set_lat_long(double latitude, double longitude) {
+	    latitude_c = latitude;
+	    longitude_c = longitude;
+	}
+
+	void set_latitude(double latitude) {
+		latitude_c = latitude;
+	}
+
+	void set_longitude(double longitude)	{
+		longitude_c = longitude;
+	}
 
 
     /**

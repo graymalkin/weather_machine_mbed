@@ -21,6 +21,7 @@
 
 #define MQTTCLIENT_QOS2 1
 #include "mbed.h"
+#include "math.h"
 #include "MQTTEthernet.h"
 #include "MQTTClient.h"
 
@@ -34,6 +35,7 @@
 #define WS2812_LENGTH 30
 
 Serial host(USBTX, USBRX);
+Serial arduino(D1, D0);
 
 // DigitalIn dummy(PTD2,PullDown);
 // wsDrive ledDriver(PTD2,PTD3,PTD1);
@@ -49,6 +51,15 @@ DigitalOut green_led(LED_GREEN);
 int main()
 {
 	memset(&pixelData, 0, sizeof(pixelData));
+	set_rain(ON);
+	wait_ms(1000);
+	set_rain(OFF);
+	wait_ms(1000);
+
+	set_mist(ON);
+	wait_ms(1000);
+	set_mist(OFF);
+	wait_ms(1000);
 
     // Mostly pinched from the HelloMQTT demo here
     // https://developer.mbed.org/teams/mqtt/code/HelloMQTT
@@ -61,10 +72,21 @@ int main()
 	host.printf("MQTT: Information.\r\n  Connected.\r\n");
 
     mqtt_subscriptions(m_client);
-	neo_colour_t colour;
-	neo.send_pixel(colour);
-	while(1)
-		m_client.yield(1000);
+	green_led = 1;
 
+	colour_t colour;
+	while(1){
+		m_client.yield(2000);
+		// colour = colours.get_colour(time(NULL));
+		colour.red =  (int)(cos((float)colour.red + 0.1f) * 255.0f);
+		colour.green =  (int)(cos((float)colour.green + 0.1f) * 255.0f);
+		colour.blue = (int)(sin((float)colour.blue + 0.1f) * 255.0f);
+		time_t tsr = sunrise.get_sunrise();
+		time_t tss = sunrise.get_sunset();
+		struct tm sr = *localtime(&tsr);
+		struct tm ss = *localtime(&tss);
 
+		host.printf("  %0.4fN, %0.4E: Current time: %08d Sunrise: %08d, Sunset: %08d\r\n", sunrise.getLatitude(), sunrise.getLongitude(), time(NULL), tsr, tss);
+		arduino.printf("C%c%c%c", colour.red,  colour.green, colour.blue);
+	}
 }
