@@ -28,3 +28,5 @@ Topics to subscribe to, and their purpose
 | `weather_sim/light_level`      | Set mist state                                | Set some light level (0..100) |
 | `weather_sim/lightning_strike` | Perform a lightning strike                    | No data required              |
 | `weather_sim/test`             | Run through a test cycle                      | No data required              |
+| `weather_sim/set_sunrise`      | Changes the time of sunrise                   | UNIX time of sunrise          |
+| `weather_sim/set_sunset`       | Changes the time of sunset                    | UNIX time of sunset           |

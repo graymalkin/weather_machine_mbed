@@ -49,6 +49,10 @@ int mqtt_subscriptions(MQTT::Client<MQTTEthernet, Countdown>& m_client)
     if((rc = m_client.subscribe("weather_sim/test", MQTT::QOS1, mqtt_do_test)) != 0)
 		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/test'\r\n", rc);
 
+    if((rc = m_client.subscribe("weather_sim/set_sunrise", MQTT::QOS1, mqtt_set_sunrise_utc)) != 0)
+		host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/set_sunrise'\r\n", rc);
+    if((rc = m_client.subscribe("weather_sim/set_sunset", MQTT::QOS1, mqtt_set_sunset_utc)) != 0)
+        host.printf("MQTT Error: (%d)\r\n  Failed to subscribe to `weather_sim/set_sunset'\r\n", rc);
     return 0;
 }
 

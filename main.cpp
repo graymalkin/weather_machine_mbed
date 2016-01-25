@@ -42,8 +42,11 @@ Serial arduino(D1, D0);
 DigitalOut neo_pin(PTD2);
 NeoPixel neo(neo_pin);
 pixelInfo pixelData[WS2812_LENGTH];
+
+extern time_t sunrise_utc;
+extern time_t sunset_utc;
 Sunrise sunrise;
-// Colours colours(sunrise);
+Colours cls;
 
 DigitalOut neopin(D9);
 DigitalOut green_led(LED_GREEN);
@@ -77,16 +80,9 @@ int main()
 	colour_t colour;
 	while(1){
 		m_client.yield(2000);
-		// colour = colours.get_colour(time(NULL));
-		// colour.red =  (int)(cos((float)colour.red + 0.1f) * 255.0f);
-		// colour.green =  (int)(cos((float)colour.green + 0.1f) * 255.0f);
-		// colour.blue = (int)(sin((float)colour.blue + 0.1f) * 255.0f);
-		// time_t tsr = sunrise.get_sunrise();
-		// time_t tss = sunrise.get_sunset();
-		// struct tm sr = *localtime(&tsr);
-		// struct tm ss = *localtime(&tss);
+        time_t current_time = time(NULL);
 
-		// host.printf("  %0.4fN, %0.4E: Current time: %08d Sunrise: %08d, Sunset: %08d\r\n", sunrise.getLatitude(), sunrise.getLongitude(), time(NULL), tsr, tss);
-		// arduino.printf("C%c%c%c", colour.red,  colour.green, colour.blue);
+        color_t colour = cls.get_colour(current_time, sunrise_utc, sunset_utc);
+		arduino.printf("C%c%c%c", colour.r,  colour.g, colour.b);
 	}
 }
