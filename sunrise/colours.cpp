@@ -1,97 +1,53 @@
-#include <math.h>
+#define INTERP_POINT_COUNT 5
 
+#define COLOR_BLACK {0, 0, 0}
+#define COLOR_ORANGE {254, 91, 53}
+#define COLOR_BLUE {59, 185, 255}
+
+#include <Math.h>
+#include <time.h>
 #include "colours.h"
 
-colour_t Colours::temperature_to_colour(int temperature)
-{
-    int r, g, b;
-    if(temperature <= 66) {
-        r = 255;
-    }
-    else {
-        r = temperature - 60;
-        r = (int) (329.698727446 * pow((float)r, -0.1332047592));
-        if(r < 0) r = 0;
-        if(r > 255) r = 255;
-    }
+color_t colors[INTERP_POINT_COUNT] = {COLOR_BLACK, COLOR_ORANGE, COLOR_BLUE, COLOR_ORANGE, COLOR_BLACK};
+double times[INTERP_POINT_COUNT] = {0, 0.1, 0.5, 0.9, 1}; 
 
-    if(temperature <= 66) {
-        g = temperature;
-        g = 99.4708025861 * log(g) - 161.1195681661;
-        if(g < 0) g = 0;
-        if(g > 255) g = 255;
-    } else {
-        g = temperature - 60;
-        g = 288.1221695283 * pow(g, -0.0755148492);
-        if(g < 0) g = 0;
-        if(g > 255) g = 255;
-    }
-
-    if (temperature >= 66) {
-        b = 255;
-    } else {
-        b = temperature - 10;
-        b = 138.5177312231 * log(b) - 305.0447927307;
-        if(b < 0) b = 0;
-        if(b > 255) b = 255;
-    }
-
-    colour_t colour;
-    colour.red = r;
-    colour.blue = b;
-    colour.green = g;
-    return colour;
+int Colours::interpolate_int(int first_int, int second_int, double interpolation_fraction){
+    double range = second_int - first_int;
+    return first_int + (int)round(range*interpolation_fraction);
 }
 
-colour_t Colours::get_colour(time_t time)
-{
-    struct tm tm = *localtime(&time);
-    colour_t colour = temperature_to_colour(66);
-    float luminosity = 1.0f;
+color_t Colours::interpolate_color(color_t first_color, color_t second_color, double interpolation_fraction){
+    int r, g, b;
 
-    // Calculate the time to the next sunrise/sunset
-    int time_of_day = (tm.tm_hour-1) * 60 * 60 + tm.tm_min * 60 + tm.tm_sec;
-    int time_of_sunset = sr.get_sunset();
-    int time_of_sunrise = sr.get_sunrise();
+    r = interpolate_int(first_color.r, second_color.r, interpolation_fraction);
+    g = interpolate_int(first_color.g, second_color.g, interpolation_fraction);
+    b = interpolate_int(first_color.b, second_color.b, interpolation_fraction);
 
-    // Sunrise from 1000k to 6600k
-    if(time_of_day - time_of_sunrise < 60 * 60 && time_of_day - time_of_sunrise > 0)
-    {
-        colour = temperature_to_colour(5 + ((time_of_day - time_of_sunrise)/60));
-        // printf("Sunrise. %dK\n", 10+18*(time_of_day - time_of_sunrise)/60);
-    }
+    return (color_t) {r, g, b};
+}
 
-    // Sunset from 6600k to 1000k
-    if(time_of_sunset - time_of_day < 60 * 60 && time_of_sunset - time_of_day > 0)
-    {
-        colour = temperature_to_colour(5 + ((time_of_sunset - time_of_day)/60));
-        // printf("Sunset. %dK\n", 10+18*(time_of_day - time_of_sunrise)/60);
-    }
+color_t Colours::getColorForNormalisedTime(double normalised_time){
+    for(int i = 0; i < INTERP_POINT_COUNT-1; i++){
+        if (normalised_time >= times[i] && normalised_time <= times[i+1]){
+            double range = times[i+1] - times[i];
+            double value = normalised_time - times[i];
+            double interpolation_fraction = value/range;
 
-    if(time_of_day <= time_of_sunrise)
-    {
-        colour = temperature_to_colour(5);
-        // Sunrise is less than an hour away
-        if(time_of_sunrise - time_of_day < 30) {
-            luminosity = 0.033*((time_of_sunrise - time_of_day)/30);
+            return interpolate_color(colors[i], colors[i+1], interpolation_fraction);
         }
-        else
-            luminosity = 0.033;
     }
 
-    if(time_of_day >= time_of_sunset)
-    {
-        colour = temperature_to_colour(5);
-        if(time_of_sunset - time_of_day < 30) {
-            luminosity = 1.0 - 0.033*((time_of_day - time_of_sunset)/30);
-        }
-        else
-            luminosity = 0.033;
-    }
+    return (color_t) COLOR_BLACK;
+}
 
-    colour.red *= luminosity;
-    colour.green *= luminosity;
-    colour.blue *= luminosity;
+double Colours::normalise_time(time_t current_time, time_t sunrise, time_t sunset){
+    double range = (sunset - sunrise);
+    double value = current_time - sunrise;
 
-    return colour;
+    return value/range;
+}
+
+color_t Colours::get_colour(time_t current_time, time_t sunrise, time_t sunset){
+    double normalised_time = normalise_time(current_time, sunrise, sunset);
+    return getColorForNormalisedTime(normalised_time);
 }

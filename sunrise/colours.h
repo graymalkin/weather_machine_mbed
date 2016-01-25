@@ -6,20 +6,25 @@
 #ifndef __colours_h_
 #define __colours_h_
 
-#include "sunrise.h"
+typedef struct{
+    int r, g, b;
+} color_t;
 
 class Colours {
 public:
-    Colours(Sunrise srise) : sr(srise) {}
-
     /**
      * Convert the current time into an RGB colour to display.
      */
-    colour_t get_colour(time_t time);
+    color_t get_colour(time_t current_time, time_t sunrise, time_t sunset);
 private:
-    Sunrise sr;
+	int interpolate_int(int first_int, int second_int, double interpolation_fraction);
 
-    colour_t temperature_to_colour(int temperature);
+	color_t interpolate_color(color_t first_color, color_t second_color, double interpolation_fraction);
+
+	color_t getColorForNormalisedTime(double normalised_time);
+
+	double normalise_time(time_t current_time, time_t sunrise, time_t sunset);
+
 };
 
 #endif // __colours_h_

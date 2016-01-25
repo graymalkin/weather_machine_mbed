@@ -43,7 +43,7 @@ DigitalOut neo_pin(PTD2);
 NeoPixel neo(neo_pin);
 pixelInfo pixelData[WS2812_LENGTH];
 Sunrise sunrise;
-Colours colours(sunrise);
+// Colours colours(sunrise);
 
 DigitalOut neopin(D9);
 DigitalOut green_led(LED_GREEN);
@@ -78,15 +78,15 @@ int main()
 	while(1){
 		m_client.yield(2000);
 		// colour = colours.get_colour(time(NULL));
-		colour.red =  (int)(cos((float)colour.red + 0.1f) * 255.0f);
-		colour.green =  (int)(cos((float)colour.green + 0.1f) * 255.0f);
-		colour.blue = (int)(sin((float)colour.blue + 0.1f) * 255.0f);
-		time_t tsr = sunrise.get_sunrise();
-		time_t tss = sunrise.get_sunset();
-		struct tm sr = *localtime(&tsr);
-		struct tm ss = *localtime(&tss);
+		// colour.red =  (int)(cos((float)colour.red + 0.1f) * 255.0f);
+		// colour.green =  (int)(cos((float)colour.green + 0.1f) * 255.0f);
+		// colour.blue = (int)(sin((float)colour.blue + 0.1f) * 255.0f);
+		// time_t tsr = sunrise.get_sunrise();
+		// time_t tss = sunrise.get_sunset();
+		// struct tm sr = *localtime(&tsr);
+		// struct tm ss = *localtime(&tss);
 
-		host.printf("  %0.4fN, %0.4E: Current time: %08d Sunrise: %08d, Sunset: %08d\r\n", sunrise.getLatitude(), sunrise.getLongitude(), time(NULL), tsr, tss);
-		arduino.printf("C%c%c%c", colour.red,  colour.green, colour.blue);
+		// host.printf("  %0.4fN, %0.4E: Current time: %08d Sunrise: %08d, Sunset: %08d\r\n", sunrise.getLatitude(), sunrise.getLongitude(), time(NULL), tsr, tss);
+		// arduino.printf("C%c%c%c", colour.red,  colour.green, colour.blue);
 	}
 }
